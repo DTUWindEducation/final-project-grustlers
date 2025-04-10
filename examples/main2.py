@@ -12,7 +12,7 @@ import sys
 # # sys.path.insert(0, '../src')
 sys.path.insert(0, __file__.replace('main2.py', '../src'))
 
-import WRA
+from WRA import classes
 
 
 # child class of DataSites used to interpolate for a input of x,y
@@ -32,10 +32,10 @@ velocity_keys = list(ds.variables.keys())[-4:]
 # Lat: [8.   7.75]
 # Lon: [55.5  55.75]
 
-ds1 = WRA.DataSites(ds, latitude=8, longitude=55.5, name="P1")
-print(ds1.v_x100)
-print(ds1.get_velocity()['100'])
-print(ds1.get_angle()['10'])
+ds1 = classes.DataSite(ds, latitude=8, longitude=55.5, height=10, name="P1")
+print(ds1.v_x)
+print(ds1.get_velocity())
+print(ds1.get_angle())
 print(ds1.get_surface_roughness())
 
 '''
