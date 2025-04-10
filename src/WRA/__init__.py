@@ -6,15 +6,24 @@ import numpy as np
 class DataSites:
     ''' This class is used to handle raw data and
     to compute fundamental values.'''
-    def __init__(self, data_set, name=None):
+    def __init__(self, data_set, latitude, longitude, name=None):
         '''Initializes the class with attributes for each
         velocity component in east- and northward directions.'''
-        self.lat = data_set['latitude'].values
-        self.lon = data_set['longitude'].values
-        self.v_x10 = data_set['u10']
-        self.v_y10 = data_set['v10']
-        self.v_x100 = data_set['u100']
-        self.v_y100 = data_set['v100']
+        lat_dict = {lat: i for i, lat in enumerate(data_set['latitude'].values)}
+        lon_dict = {lon: i for i, lon in enumerate(data_set['longitude'].values)}
+        
+        self.name = name
+
+        self.lat_coord = latitude
+        self.lon_coord = longitude
+
+        lat_iter = lat_dict[self.lat_coord]
+        lon_iter = lon_dict[self.lon_coord]
+
+        self.v_x10 = data_set['u10'][:, lat_iter, lon_iter].values
+        self.v_y10 = data_set['v10'][:, lat_iter, lon_iter].values
+        self.v_x100 = data_set['u100'][:, lat_iter, lon_iter].values
+        self.v_y100 = data_set['v100'][:, lat_iter, lon_iter].values
 
     def get_velocity(self):
         '''This is a method'''
@@ -37,7 +46,10 @@ class DataSites:
         r = u_z / u_z_ref
         z_0 = np.exp((r * np.log(z_ref) - np.log(z)) / (r - 1))
         # unrealistically high roughness set to 10 below
-        z_0_mean = [np.mean(
-            z_0.values[:, lat, lon][z_0.values[:, lat, lon] < 10])
-            for lat in range(2) for lon in range(2)]
+        z_0_mean = np.mean(z_0[z_0 < 10])
         return z_0_mean
+
+class InterpolatedSites(DataSites):
+
+    def __init__(self, data_set, latitude, longitude, name=None):
+        super().__init__(data_set, latitude, longitude, name)

@@ -29,15 +29,16 @@ ds = xr.load_dataset(data_set)
 
 velocity_keys = list(ds.variables.keys())[-4:]
 
-ds1 = WRA.DataSites(ds, "ds1")
-ds1.v_x100
-ds1.get_velocity()['100']
-ds1.get_angle()['10']
-ds1.get_surface_roughness()
+# Lat: [8.   7.75]
+# Lon: [55.5  55.75]
 
-LAT=2
-LON=2
+ds1 = WRA.DataSites(ds, latitude=8, longitude=55.5, name="P1")
+print(ds1.v_x100)
+print(ds1.get_velocity()['100'])
+print(ds1.get_angle()['10'])
+print(ds1.get_surface_roughness())
 
+'''
 fig, ax = plt.subplots(2, 2, figsize=(8, 6))
 for i in range(LAT):
     for j in range(LON):
@@ -51,3 +52,4 @@ for i in range(LAT):
 plt.suptitle("Velocity: 100 m")
 plt.tight_layout()
 plt.show()
+'''
