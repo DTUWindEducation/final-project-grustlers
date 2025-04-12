@@ -42,23 +42,15 @@ class DataSite(WindCalculation):
         super().__init__(self.v_x, self.v_y, self.h)
 
     def load_components(self):
-        lat_dict = {lat: i for i, lat in
-                    enumerate(self.data['latitude'].values)}
-        lon_dict = {lon: i for i, lon in
-                    enumerate(self.data['longitude'].values)}
-
-        lat_idx = lat_dict[self.lat]
-        lon_idx = lon_dict[self.lon]
-
         v_x = np.empty((2, self.data_length))
         v_y = np.empty((2, self.data_length))
 
         for i, h in enumerate(self.h):  # idx 1 is reference point
-            u_str = 'u'+str(h)
-            v_str = 'v'+str(h)
 
-            v_x[i] = self.data[u_str][:, lat_idx, lon_idx].values
-            v_y[i] = self.data[v_str][:, lat_idx, lon_idx].values
+            v_x[i] = self.data[f'u{h}'].sel(latitude=self.lat,
+                                            longitude=self.lon).values
+            v_y[i] = self.data[f'v{h}'].sel(latitude=self.lat,
+                                            longitude=self.lon).values
 
         return v_x, v_y
 
@@ -78,11 +70,12 @@ def interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats
 
 
 class InterpolatedSite(WindCalculation):
-    def __init__(self, dataset, latitude_point, longitude_point, heights=[10, 100], name=None):
+    def __init__(self, dataset, latitude_point, longitude_point, height_point, ref_heights=[10, 100], name=None):
         self.data = dataset
         self.lat_point = latitude_point
         self.lon_point = longitude_point
-        self.h = heights
+        self.h = height_point
+        self.h_ref = ref_heights
         self.name = name
         self.data_length = self.data.sizes['valid_time']
         self.lats = self.data['latitude'].values
@@ -93,36 +86,15 @@ class InterpolatedSite(WindCalculation):
         # efter vi har components fra funktionen med interpolation!
 
     def load_components_at_sites(self):
-        lat_dict = {f"{lat}": i for i, lat in
-                    enumerate(self.lats)}
-        lon_dict = {f"{lon}": i for i, lon in
-                    enumerate(self.lons)}
+        v_x_sites = {}
+        v_y_sites = {}
 
-        v_x_sites = {f"{h}": {f"({lat},{lon})": np.empty(self.data_length)}
-                     for h in self.h
-                     for lat in lat_dict.keys()
-                     for lon in lon_dict.keys()}
-        v_y_sites = {f"{h}": {f"({lat},{lon})": np.empty(self.data_length)}
-                     for h in self.h
-                     for lat in lat_dict.keys()
-                     for lon in lon_dict.keys()}
+        for h in self.h_ref:
+            v_x_sites[f'u{h}'] = self.data[f'u{h}'].values
 
-        for lat in lat_dict.keys():
-            for lon in lon_dict.keys():
-                for h in self.h:
-                    u_str = 'u'+str(h)  # eastward velocity component at height h
-                    v_str = 'v'+str(h)  # northward velocity component at height h
+            v_y_sites[f'v{h}'] = self.data[f'v{h}'].values
 
-                    v_x_sites[f"{h}"][f"({lat},{lon})"] = (
-                        self.data[u_str][:,
-                                         lat_dict[lat],
-                                         lon_dict[lon]].values)
-                    v_y_sites[f"{h}"][f"({lat},{lon})"] = (
-                        self.data[v_str][:,
-                                         lat_dict[lat],
-                                         lon_dict[lon]].values)
         return v_x_sites, v_y_sites
-        # the velocities are output as dicts: v["height"]["point"]
 
     def interpolate_wind_components2(self):
         '''
@@ -130,12 +102,6 @@ class InterpolatedSite(WindCalculation):
         hvorfor jeg også forsøgte bare med u10 hvilket heller ikke virkede af en 
         eller anden grund (points/grid driller pludseligt).
         '''
-
-        lat_dict = {f"{lat}": i for i, lat in
-                    enumerate(self.lats)}
-        lon_dict = {f"{lon}": i for i, lon in
-                    enumerate(self.lons)}
-        
         time_steps = np.arange(self.data_length)
         grid = (time_steps, self.lats, self.lons)
         points = np.column_stack((
@@ -147,45 +113,10 @@ class InterpolatedSite(WindCalculation):
                          self.lon_point,
                          dtype=float)
         ))
-        # shapes:
-        # grid = (lats, lons, times)
-        # points = (times x 3)
-        # u10 = (lats, lons, times)
+        interp_dict = {}
 
-        print(grid)
-        print(points.shape)
-        print(np.array([[self.v_x_sites["10"][f"({lat},{lon})"]
-                                        for lat in lat_dict.keys()]
-                                        for lon in lon_dict.keys()]).shape)
-        print(np.array([[self.v_x_sites["10"][f"({lat},{lon})"]
-                                        for lat in lat_dict.keys()]
-                                        for lon in lon_dict.keys()]).T.shape)        
-        # u10_interp = interpn(grid,
-        #                      self.data['u10'].values,
-        #                      points,
-        #                      bounds_error=True)
-        
-        #u10=np.array([[self.v_x_sites["10"][f"({lat},{lon})"]
-                             #           for lat in lat_dict.keys()]
-                             #           for lon in lon_dict.keys()]).T,
+        for h in self.h_ref:
+            interp_dict[f'u{h}'] = interpn(grid, self.v_x_sites[f'u{h}'], points, bounds_error=True)
+            interp_dict[f'v{h}'] = interpn(grid, self.v_y_sites[f'v{h}'], points, bounds_error=True)
 
-        # interp_dict = {}
-        # for h in self.h:
-        #     u_str = 'u'+str(h)
-        #     v_str = 'v'+str(h)
-        #     interp_dict[u_str] = interpn(
-        #         grid,
-        #         np.array([[self.v_x_sites[f"{h}"][f"({lat},{lon})"]
-        #                    for lon in lon_dict.keys()]
-        #                   for lat in lat_dict.keys()]),  # u10/u100
-        #         points,
-        #         bounds_error=True)
-        #     interp_dict[v_str] = interpn(
-        #         grid,
-        #         np.array([[self.v_y_sites[f"{h}"][f"({lat},{lon})"]
-        #                    for lon in lon_dict.keys()]
-        #                   for lat in lat_dict.keys()]),  # v10/v100
-        #         points,
-        #         bounds_error=True)
-
-        return grid, points  #u10_interp #, v10_interp, u100_interp, v100_interp
+        return interp_dict

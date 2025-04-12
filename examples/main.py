@@ -26,14 +26,14 @@ path_package = path_dir.parent  # package path: 'final-project-grustlers'
 data_set = path_package / 'inputs/2009-2011.nc'
 
 ds = xr.load_dataset(data_set)
-
 velocity_keys = list(ds.variables.keys())[-4:]
 
 # Lat: [8.   7.75]
 # Lon: [55.5  55.75]
 
 ds1 = classes.DataSite(ds, latitude=8, longitude=55.5, heights=[10, 100], name="P1")
-ds1.v_x
+print(ds1.v_x)
+print("test")
 ds1.get_velocity_site()
 ds1.get_angle_rad()
 ds1.get_angle_deg()
@@ -67,12 +67,12 @@ u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, 
 
 # print(u10_res)
 # print(u10[:,0,1])
-lat=0.5
-lon=0.5
-is1 = classes.InterpolatedSite(ds, lat, lon)
-print(is1.v_x_sites)
-print(list(is1.v_x_sites.keys()))
-print(is1.v_x_sites['100'])
-print(is1.v_x_sites['100']['(7.75,55.5)'])
-print(len(is1.v_x_sites['100']['(7.75,55.5)']))
+lat = 7.9
+lon = 55.6
+is1 = classes.InterpolatedSite(ds, lat, lon, 15)
+#print(is1.v_x_sites)
+#print(list(is1.v_x_sites.keys()))
+#print(is1.v_x_sites['100'])
+#print(is1.v_x_sites['100']['(7.75,55.5)'])
+#print(len(is1.v_x_sites['100']['(7.75,55.5)']))
 print(is1.interpolate_wind_components2())
