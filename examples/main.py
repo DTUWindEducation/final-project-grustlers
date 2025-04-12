@@ -5,36 +5,74 @@ This is the main script
 from pathlib import Path
 import xarray as xr
 import matplotlib.pyplot as plt
+import numpy as np
+
+import sys
+
+# # sys.path.insert(0, '../src')
+sys.path.insert(0, __file__.replace('main.py', '../src'))
+
+from WRA import classes
+
+
+# child class of DataSites used to interpolate for a input of x,y
+# attributes: x, y, z, name, year
+
 
 path_main = Path(__file__)  # main file
 path_dir = path_main.parent  # main file folder: 'examples'
 path_package = path_dir.parent  # package path: 'final-project-grustlers'
 
-data_set = path_package / 'inputs/1997-1999.nc'
+data_set = path_package / 'inputs/2009-2011.nc'
 
 ds = xr.load_dataset(data_set)
 
-# print(ds.sizes)
-
-for k in ds.variables.keys():
-    print(k)
-
-T, LAT, LON = ds['u10'].shape
 velocity_keys = list(ds.variables.keys())[-4:]
-colors = ['red', 'blue', 'orange', 'purple']
 
-v_k = velocity_keys[0]
+# Lat: [8.   7.75]
+# Lon: [55.5  55.75]
 
-fig, ax = plt.subplots(2, 2, figsize=(8, 6))
-for i in range(LAT):
-    for j in range(LON):
-        # for v_k in velocity_keys:
-        ds[v_k][:, i, j].plot(ax=ax[i, j], label=v_k)
-        ax[i, j].tick_params(axis='x', rotation=20)
-        ax[i, j].set_ylabel("Wind speed [m/s]")
-        ax[i, j].set_title(f"Latitude: {ds['latitude'].values[i]}, "
-                           + f"Longitude: {ds['longitude'].values[j]}")
-        # ax[i, j].legend()
-plt.suptitle(f"Velocity: {v_k}")
-plt.tight_layout()
-plt.show()
+ds1 = classes.DataSite(ds, latitude=8, longitude=55.5, heights=[10, 100], name="P1")
+ds1.v_x
+ds1.get_velocity_site()
+ds1.get_angle_rad()
+ds1.get_angle_deg()
+ds1.get_alpha()
+
+'''Added from previous "Testing"-file to demonstrate 
+the InterpolatedSite class'''
+
+# Grid definition:
+lats = [0, 1]
+lons = [0, 1]
+time_steps = np.arange(26280)
+
+# Velocity components at the two heights
+u10 = ds['u10'].values
+u100 = ds['u100'].values
+v10 = ds['v10'].values
+v100 = ds['v100'].values
+
+# Example usage
+lat = 0.5
+lon = 0.5
+
+u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons)
+
+# print(u10_res)
+
+lat = 0
+lon = 1
+u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons)
+
+# print(u10_res)
+# print(u10[:,0,1])
+lat=0.5
+lon=0.5
+is1 = classes.InterpolatedSite(ds, lat, lon)
+print(is1.v_x_sites)
+print(list(is1.v_x_sites.keys()))
+print(is1.v_x_sites['100'])
+print(is1.v_x_sites['100']['(7.75,55.5)'])
+print(len(is1.v_x_sites['100']['(7.75,55.5)']))
+print(is1.interpolate_wind_components2())

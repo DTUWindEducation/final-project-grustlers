@@ -63,7 +63,9 @@ def interpolate_wind_components(lat, lon, u10, v10, u100, v100, lats, lons):
         np.full_like(times, lon, dtype=float)
 
     ))
- 
+# grid = (times, lats, lons)
+# u10 = (times, lats, lons)
+# points = (times x 3) 
     u10_interp = interpn(grid, u10, points, bounds_error=True)
 
     v10_interp = interpn(grid, v10, points, bounds_error=True)
@@ -90,11 +92,3 @@ u10_res, v10_res, u100_res, v100_res = interpolate_wind_components(lat, lon, u10
 
 print(u10_res)
 print(u10[:,0,1])
-
-lat = 2
-
-lon = 3
-
-u10_res, v10_res, u100_res, v100_res = interpolate_wind_components(lat, lon, u10, v10, u100, v100, lats, lons)
-
-print(u10_res)
