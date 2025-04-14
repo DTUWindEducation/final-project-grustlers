@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.interpolate import interpn
+from scipy.stats import weibull_min
+import matplotlib.pyplot as plt
 
 class WindCalculation():
     def __init__(self, v_x, v_y, heights):
@@ -54,7 +56,7 @@ class DataSite(WindCalculation):
 
         return v_x, v_y
 
-
+### Skal den her bare fjernes?
 def interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons):
     grid = (time_steps, lats, lons)
     points = np.column_stack((
@@ -71,10 +73,11 @@ def interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats
 
 class InterpolatedSite(WindCalculation):
     def __init__(self, dataset, latitude_point, longitude_point, height_point, ref_heights=[10, 100], name=None):
+        ### Noget med en exception error hvis height_point ikke er inden for ref_heights. Måske ikke her, men et andet sted?
         self.data = dataset
         self.lat_point = latitude_point
         self.lon_point = longitude_point
-        self.h = height_point
+        self.h_point = height_point  ### Jeg ændrede navnet på den her fordi dens værdi blev overwritet når vi initializer parent classen.
         self.h_ref = ref_heights
         self.name = name
         self.data_length = self.data.sizes['valid_time']
@@ -82,8 +85,12 @@ class InterpolatedSite(WindCalculation):
         self.lons = self.data['longitude'].values
 
         self.v_x_sites, self.v_y_sites = self.load_components_at_sites()
-        # super().__init__(self.v_x, self.v_y, self.h) -> kommer senere
-        # efter vi har components fra funktionen med interpolation!
+
+        interp_dict = self.interpolate_wind_components2()
+        self.v_x_point = np.vstack([interp_dict[f'u{h}'] for h in self.h_ref])
+        self.v_y_point = np.vstack([interp_dict[f'v{h}'] for h in self.h_ref])
+
+        super().__init__(self.v_x_point, self.v_y_point, self.h_ref)  # Initializing the parent class with the desired wind speed components from the point as well as the refence heights for alpha calculation
 
     def load_components_at_sites(self):
         v_x_sites = {}
@@ -97,11 +104,6 @@ class InterpolatedSite(WindCalculation):
         return v_x_sites, v_y_sites
 
     def interpolate_wind_components2(self):
-        '''
-        Jeg har prøvet at få den til at køre på en smart måde, men det virkede ikke,
-        hvorfor jeg også forsøgte bare med u10 hvilket heller ikke virkede af en 
-        eller anden grund (points/grid driller pludseligt).
-        '''
         time_steps = np.arange(self.data_length)
         grid = (time_steps, self.lats, self.lons)
         points = np.column_stack((
@@ -116,7 +118,37 @@ class InterpolatedSite(WindCalculation):
         interp_dict = {}
 
         for h in self.h_ref:
-            interp_dict[f'u{h}'] = interpn(grid, self.v_x_sites[f'u{h}'], points, bounds_error=True)
-            interp_dict[f'v{h}'] = interpn(grid, self.v_y_sites[f'v{h}'], points, bounds_error=True)
+            interp_dict[f'u{h}'] = interpn(grid, self.v_x_sites[f'u{h}'], 
+                                           points, bounds_error=True)
+            interp_dict[f'v{h}'] = interpn(grid, self.v_y_sites[f'v{h}'], 
+                                           points, bounds_error=True)
 
         return interp_dict
+
+    def calculate_wind_at_height(self):
+        alpha = self.get_alpha()
+        u_ref = self.get_velocity_site()[0]
+        u_z = u_ref * (self.h_point/self.h_ref[0])**alpha
+        return u_z
+
+    def weibull_distribution(self):
+        wind_speeds = self.calculate_wind_at_height()
+        params = weibull_min.fit(wind_speeds, floc=0)
+        A = params[2]
+        k = params[0]
+
+        u = np.linspace(0, wind_speeds.max()+5, 100) ### Måske vi bare skal sætte den her til (0, 25) det er rimelig typisk
+        pdf = (k / A) * (u / A)**(k - 1) * np.exp(- (u / A)**k)
+
+        plt.figure(figsize=(8, 5))
+        plt.hist(wind_speeds, bins=30, density=True, alpha=0.6, color='skyblue', label='Wind speed histogram')
+        plt.plot(u, pdf, 'b-', lw=2, label=f'Weibull fit (k={k:.2f}, A={A:.2f})')
+        plt.xlabel('Wind Speed [m/s]')
+        plt.ylabel('Density [-]')
+        plt.title(f'Weibull distribution (Latitude: {self.lat_point}, longitude: {self.lon_point}, and height: {self.h_point}m)')
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+        return k, A

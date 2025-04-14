@@ -69,10 +69,15 @@ u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, 
 # print(u10[:,0,1])
 lat = 7.9
 lon = 55.6
-is1 = classes.InterpolatedSite(ds, lat, lon, 15)
+is1 = classes.InterpolatedSite(ds, lat, lon, 50)
 #print(is1.v_x_sites)
 #print(list(is1.v_x_sites.keys()))
 #print(is1.v_x_sites['100'])
 #print(is1.v_x_sites['100']['(7.75,55.5)'])
 #print(len(is1.v_x_sites['100']['(7.75,55.5)']))
 print(is1.interpolate_wind_components2())
+
+#print(is1.load_components_at_sites())
+print(is1.get_velocity_site())
+test_data = is1.calculate_wind_at_height()
+is1.weibull_distribution()
