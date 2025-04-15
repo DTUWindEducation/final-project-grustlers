@@ -34,8 +34,8 @@ velocity_keys = list(ds.variables.keys())[-4:]
 ds1 = classes.DataSite(ds, latitude=8, longitude=55.5, heights=[10, 100], name="P1")
 print(ds1.v_x)
 print("test")
-ds1.get_velocity_site()
-ds1.get_angle_rad()
+ds1.get_velocity_site()  # 2) ws time series at the 2 heights at 1 of 4 locs
+ds1.get_angle_rad()  # 2) wd time series at the 2 heights at 1 of 4 locs
 ds1.get_angle_deg()
 ds1.get_alpha()
 
@@ -57,13 +57,13 @@ v100 = ds['v100'].values
 lat = 0.5
 lon = 0.5
 
-u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons)
+#u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons)
 
 # print(u10_res)
 
 lat = 0
 lon = 1
-u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons)
+#u10_res, v10_res, u100_res, v100_res = classes.interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons)
 
 # print(u10_res)
 # print(u10[:,0,1])
@@ -75,9 +75,14 @@ is1 = classes.InterpolatedSite(ds, lat, lon, 50)
 #print(is1.v_x_sites['100'])
 #print(is1.v_x_sites['100']['(7.75,55.5)'])
 #print(len(is1.v_x_sites['100']['(7.75,55.5)']))
-print(is1.interpolate_wind_components2())
+print(is1.interpolate_wind_components())  # Preparation for 3) Velocity components
 
 #print(is1.load_components_at_sites())
-print(is1.get_velocity_site())
-test_data = is1.calculate_wind_at_height()
-is1.weibull_distribution()
+print(is1.get_velocity_site())  # 3) Compute ws and wd at 10, 100 m inside box
+test_data = is1.calculate_wind_at_height()  # 4) Compute ws at given height
+is1.weibull_distribution()  # 5, 6) Fit Weib dist @ height z inside box w/ hist
+
+is1.show_wind_rose()  # 7) Show wind rose inside the box at a given height
+# there's barely any effect of hieght on wind direction
+illegal_height=101
+is2 = classes.InterpolatedSite(ds, lat, lon, illegal_height)

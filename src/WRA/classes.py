@@ -2,6 +2,9 @@ import numpy as np
 from scipy.interpolate import interpn
 from scipy.stats import weibull_min
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
+from windrose import WindroseAxes
+
 
 class WindCalculation():
     def __init__(self, v_x, v_y, heights):
@@ -56,28 +59,18 @@ class DataSite(WindCalculation):
 
         return v_x, v_y
 
-### Skal den her bare fjernes?
-def interpolate_wind_components(lat, lon, u10, v10, u100, v100, time_steps, lats, lons):
-    grid = (time_steps, lats, lons)
-    points = np.column_stack((
-        time_steps, 
-        np.full_like(time_steps, lat, dtype=float),
-        np.full_like(time_steps, lon, dtype=float)
-    ))
-    u10_interp = interpn(grid, u10, points, bounds_error=True)
-    v10_interp = interpn(grid, v10, points, bounds_error=True)
-    u100_interp = interpn(grid, u100, points, bounds_error=True)
-    v100_interp = interpn(grid, v100, points, bounds_error=True)
-    return u10_interp, v10_interp, u100_interp, v100_interp
-
 
 class InterpolatedSite(WindCalculation):
     def __init__(self, dataset, latitude_point, longitude_point, height_point, ref_heights=[10, 100], name=None):
-        ### Noget med en exception error hvis height_point ikke er inden for ref_heights. Måske ikke her, men et andet sted?
+        if not (ref_heights[0] <= height_point <= ref_heights[1]):
+            raise Exception(
+                f"Height '{height_point} m' is not between the two "
+                + f"reference heights: ({ref_heights} m). Try another value.")
+        ### Noget med en exception error hvis height_point ikke er inden for ref_heights. Måske ikke her, men et andet sted? -- Synes det passer godt ind her. Har sat en ind nedenunder.
         self.data = dataset
         self.lat_point = latitude_point
         self.lon_point = longitude_point
-        self.h_point = height_point  ### Jeg ændrede navnet på den her fordi dens værdi blev overwritet når vi initializer parent classen.
+        self.h_point = height_point  ### Jeg ændrede navnet på den her fordi dens værdi blev overwritet når vi initializer parent classen. - Alright, godt fanget
         self.h_ref = ref_heights
         self.name = name
         self.data_length = self.data.sizes['valid_time']
@@ -86,11 +79,13 @@ class InterpolatedSite(WindCalculation):
 
         self.v_x_sites, self.v_y_sites = self.load_components_at_sites()
 
-        interp_dict = self.interpolate_wind_components2()
+        interp_dict = self.interpolate_wind_components()
         self.v_x_point = np.vstack([interp_dict[f'u{h}'] for h in self.h_ref])
         self.v_y_point = np.vstack([interp_dict[f'v{h}'] for h in self.h_ref])
 
-        super().__init__(self.v_x_point, self.v_y_point, self.h_ref)  # Initializing the parent class with the desired wind speed components from the point as well as the refence heights for alpha calculation
+        super().__init__(self.v_x_point, self.v_y_point, self.h_ref)
+        # Initializing the parent class with the desired wind speed components
+        # from the point as well as the refence heights for alpha calculation
 
     def load_components_at_sites(self):
         v_x_sites = {}
@@ -103,7 +98,7 @@ class InterpolatedSite(WindCalculation):
 
         return v_x_sites, v_y_sites
 
-    def interpolate_wind_components2(self):
+    def interpolate_wind_components(self):
         time_steps = np.arange(self.data_length)
         grid = (time_steps, self.lats, self.lons)
         points = np.column_stack((
@@ -118,9 +113,9 @@ class InterpolatedSite(WindCalculation):
         interp_dict = {}
 
         for h in self.h_ref:
-            interp_dict[f'u{h}'] = interpn(grid, self.v_x_sites[f'u{h}'], 
+            interp_dict[f'u{h}'] = interpn(grid, self.v_x_sites[f'u{h}'],
                                            points, bounds_error=True)
-            interp_dict[f'v{h}'] = interpn(grid, self.v_y_sites[f'v{h}'], 
+            interp_dict[f'v{h}'] = interpn(grid, self.v_y_sites[f'v{h}'],
                                            points, bounds_error=True)
 
         return interp_dict
@@ -137,12 +132,14 @@ class InterpolatedSite(WindCalculation):
         A = params[2]
         k = params[0]
 
-        u = np.linspace(0, wind_speeds.max()+5, 100) ### Måske vi bare skal sætte den her til (0, 25) det er rimelig typisk
+        u = np.linspace(0, wind_speeds.max()+5, 100)  ### Måske vi bare skal sætte den her til (0, 25) det er rimelig typisk -- Det kan vi godt gøre for min skyld
         pdf = (k / A) * (u / A)**(k - 1) * np.exp(- (u / A)**k)
 
         plt.figure(figsize=(8, 5))
-        plt.hist(wind_speeds, bins=30, density=True, alpha=0.6, color='skyblue', label='Wind speed histogram')
-        plt.plot(u, pdf, 'b-', lw=2, label=f'Weibull fit (k={k:.2f}, A={A:.2f})')
+        plt.hist(wind_speeds, bins=30, density=True, alpha=0.6,
+                 color='skyblue', label='Wind speed histogram')
+        plt.plot(u, pdf, 'b-', lw=2,
+                 label=f'Weibull fit (k={k:.2f}, A={A:.2f})')
         plt.xlabel('Wind Speed [m/s]')
         plt.ylabel('Density [-]')
         plt.title(f'Weibull distribution (Latitude: {self.lat_point}, longitude: {self.lon_point}, and height: {self.h_point}m)')
@@ -152,3 +149,28 @@ class InterpolatedSite(WindCalculation):
         plt.show()
 
         return k, A
+
+    def show_wind_rose(self):
+        wind_speed = self.calculate_wind_at_height()
+        wind_direction = self.get_angle_deg()[0]  # wd varies little in height
+        max_ws = int(np.ceil(
+            np.sort(wind_speed)[-int(wind_speed.shape[0]/20)]
+            ))  # the last bin is for ws that are less frequent than 5%
+        wind_range = np.append(np.arange(0, max_ws, 2), max_ws)
+
+        ax = WindroseAxes.from_ax()
+        ax.set_facecolor('white')
+        ax.bar(wind_direction,
+               wind_speed,
+               bins=wind_range,
+               normed=True,
+               opening=0.9,
+               edgecolor='white',
+               cmap=plt.cm.winter)
+        ax.set_legend(title='Wind speed [m/s]', loc='best', fontsize=16)
+        yticks = mtick.FormatStrFormatter('%.1f%%')
+        ax.yaxis.set_major_formatter(yticks)
+        ax.tick_params(axis='both', labelsize=13)
+        plt.show()
+
+        return wind_speed, wind_direction
