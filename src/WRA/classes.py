@@ -86,6 +86,7 @@ class InterpolatedSite(WindCalculation):
         super().__init__(self.v_x_point, self.v_y_point, self.h_ref)
         # Initializing the parent class with the desired wind speed components
         # from the point as well as the refence heights for alpha calculation
+        self.angle_point_rad, self.angle_point_deg = self.interpolate_angle()
 
     def load_components_at_sites(self):
         v_x_sites = {}
@@ -125,6 +126,12 @@ class InterpolatedSite(WindCalculation):
         u_ref = self.get_velocity_site()[0]
         u_z = u_ref * (self.h_point/self.h_ref[0])**alpha
         return u_z
+    
+    def interpolate_angle(self):
+        thetas_h_ref = np.unwrap(self.get_angle_rad(), axis=0)
+        theta_rad = (thetas_h_ref[0] + (self.h_point - self.h_ref[0]) / (self.h_ref[1] - self.h_ref[0]) * (thetas_h_ref[1] - thetas_h_ref[0])) % (2 * np.pi)
+        theta_deg = theta_rad * 180 / np.pi
+        return theta_rad, theta_deg
 
     def weibull_distribution(self):
         wind_speeds = self.calculate_wind_at_height()
@@ -152,7 +159,7 @@ class InterpolatedSite(WindCalculation):
 
     def show_wind_rose(self):
         wind_speed = self.calculate_wind_at_height()
-        wind_direction = self.get_angle_deg()[0]  # wd varies little in height
+        wind_direction = self.angle_point_deg  # now using the linearly interpolated angle at the height from the point
         max_ws = int(np.ceil(
             np.sort(wind_speed)[-int(wind_speed.shape[0]/20)]
             ))  # the last bin is for ws that are less frequent than 5%

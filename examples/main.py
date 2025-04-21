@@ -81,6 +81,9 @@ print(is1.interpolate_wind_components())  # Preparation for 3) Velocity componen
 print(is1.get_velocity_site())  # 3) Compute ws and wd at 10, 100 m inside box
 test_data = is1.calculate_wind_at_height()  # 4) Compute ws at given height
 is1.weibull_distribution()  # 5, 6) Fit Weib dist @ height z inside box w/ hist
+print('test')
+print(is1.get_angle_rad())
+print(is1.angle_point_rad)
 
 is1.show_wind_rose()  # 7) Show wind rose inside the box at a given height
 # there's barely any effect of hieght on wind direction
