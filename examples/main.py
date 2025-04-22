@@ -6,6 +6,9 @@ from pathlib import Path
 import xarray as xr
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import os
+#  import dask -- used inside xarray.open_mfdataset
 
 import sys
 
@@ -15,21 +18,27 @@ sys.path.insert(0, __file__.replace('main.py', '../src'))
 from WRA import classes
 
 
-# child class of DataSites used to interpolate for a input of x,y
-# attributes: x, y, z, name, year
-
-
 path_main = Path(__file__)  # main file
 path_dir = path_main.parent  # main file folder: 'examples'
 path_package = path_dir.parent  # package path: 'final-project-grustlers'
 
+'''
 data_set = path_package / 'inputs/2009-2011.nc'
-
 ds = xr.load_dataset(data_set)
 velocity_keys = list(ds.variables.keys())[-4:]
-
+'''
 # Lat: [8.   7.75]
 # Lon: [55.5  55.75]
+
+folder = os.listdir(path_package / 'inputs/')
+nc_files = [file for file in folder if file.endswith('.nc')]
+nc_files = sorted(nc_files, key=lambda x: (len(x), x))
+nc_files_selected = nc_files  # <--- redundant if allowing all files
+nc_files_path = [path_package / 'inputs' / nc_file for nc_file in nc_files_selected]
+
+ds_all = xr.open_mfdataset(nc_files_path)
+ds = ds_all
+
 
 ds1 = classes.DataSite(ds, latitude=8, longitude=55.5, heights=[10, 100], name="P1")
 print(ds1.v_x)
@@ -87,5 +96,16 @@ print(is1.angle_point_rad)
 
 is1.show_wind_rose()  # 7) Show wind rose inside the box at a given height
 # there's barely any effect of hieght on wind direction
-illegal_height=101
-is2 = classes.InterpolatedSite(ds, lat, lon, illegal_height)
+# illegal_height=101
+# is2 = classes.InterpolatedSite(ds, lat, lon, illegal_height)
+
+#### NEW ####
+power_curve_path1 = path_package / 'inputs/NREL_Reference_5MW_126.csv'
+power_curve_path2 = path_package / 'inputs/NREL_Reference_15MW_240.csv'
+power_curve_data = pd.read_csv(power_curve_path2)
+AEP, CF = is1.get_AEP(power_curve=power_curve_data,
+                      year=2000, show_curve=False)
+
+print(f"At {is1.lat_point:.1f}°N, {is1.lon_point:.1f}°E, {is1.h_point:.1f} m:")
+print(f"AEP = {AEP/10**3:.2f} MWh")
+print(f"CF = {CF*100:.2f}%")
