@@ -1,0 +1,58 @@
+<mxfile host="65bd71144e">
+    <diagram id="KyMx_F-SmI5y71zodP5E" name="Page-1">
+        <mxGraphModel dx="769" dy="458" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="class WindCalculation()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="40" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="- v_x : int or numpy.ndarray&lt;div&gt;- v_y : int or numpy.ndarray&lt;/div&gt;&lt;div&gt;- height_point : int&lt;/div&gt;&lt;div&gt;- ref_heights : list[int]&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="70" width="230" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="+ get_velocity_site()&lt;div&gt;+ get_angle_rad()&lt;/div&gt;&lt;div&gt;+ get_angle_deg()&lt;/div&gt;&lt;div&gt;+ get_alpha()&lt;/div&gt;&lt;div&gt;+ calculate_wind_at_height()&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="140" width="230" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="class DataSite(WindCalculation)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="140" y="280" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="6" target="4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="class InterpolatedSite(WindCalculation)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="420" y="280" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="&lt;div&gt;- dataset :&amp;nbsp;xarray.Dataset&lt;/div&gt;&lt;div&gt;- latitude : int&lt;/div&gt;&lt;div&gt;- longitude : int&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;- height_point : int&lt;/span&gt;&lt;div&gt;- ref_heights : list[int]&lt;/div&gt;&lt;div&gt;- name : str or None&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="140" y="310" width="230" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="+ load_components()" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="140" y="410" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Superclass" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="180" y="40" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Subclasses" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="280" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="&lt;div&gt;- dataset :&amp;nbsp;xarray.Dataset&lt;/div&gt;&lt;div&gt;- latitude_point : int&lt;/div&gt;&lt;div&gt;- longitude_point : int&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;- height_point : int&lt;/span&gt;&lt;div&gt;- ref_heights : list[int]&lt;/div&gt;&lt;div&gt;- name : str or None&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="420" y="310" width="230" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="+ load_components_at_sites()&lt;div&gt;+ interpolate_wind_components()&lt;/div&gt;&lt;div&gt;+ interpolate_angle()&lt;/div&gt;&lt;div&gt;+ weibull_distribution()&lt;/div&gt;&lt;div&gt;+ show_wind_rose()&lt;/div&gt;&lt;div&gt;+ get_AEP&lt;/div&gt;&lt;div&gt;+ compare_AEPs&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="420" y="410" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="(Standalone) Functions" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+                    <mxGeometry x="700" y="40" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="def load_nc_dataset_to_functions()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="880" y="40" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="&lt;div&gt;Input:&lt;/div&gt;- folder_path :&amp;nbsp;str&lt;br&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Output:&lt;/div&gt;&lt;div&gt;+ ds_all : xarray.Dataset&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="880" y="70" width="230" height="80" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
