@@ -5,16 +5,20 @@ Team: Grustlers
 
 ## Overview
 
-[ADD TEXT HERE!]
+'A brief overview of the package objective.'
 
 ## Quick-start guide
 
-[ADD TEXT HERE!]
+creating an environment from scratch
+python version, packages
 
 ## Architecture
 
-[ADD TEXT HERE!]
+using the diagrams here and explaining the structure
+'A description of the package architecture, with at least one diagram.'
+'A description of the class(es) you have implemented in your package, with clear reference to the file name of the code inside src.'
 
 ## Peer review
 
-[ADD TEXT HERE!]
+'A description of what peer review (if any) you have implemented.'
+her kan vi nok bruge noget af feedback vi fik fra forrige opgave
