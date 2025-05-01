@@ -20,6 +20,7 @@ Methods:
     - __init__(self, dataset, latitude, longitude, height_point=10,
                  ref_heights=[10, 100], name=None)
     - load_components(self)
+    - plot_velocity_site(self, year=1997)
 
 3. InterpolatedSite(WindCalculation): used to perform wind calculations at a
 any given point inside the box defined by the boundaries - latitude,
@@ -192,7 +193,7 @@ class DataSite(WindCalculation):
         self.h_point = height_point
         self.h_ref = ref_heights
         self.name = name
-        self.data_length = self.data.sizes['valid_time']
+        self.data_length = self.data.sizes['time']
 
         self.v_x, self.v_y = self.load_components()
         super().__init__(self.v_x, self.v_y, self.h_point, self.h_ref)
@@ -218,6 +219,56 @@ class DataSite(WindCalculation):
                                             longitude=self.lon).values
 
         return v_x, v_y
+
+    def plot_velocity_site(self, year=1997):
+        """
+        Plot wind velocity time series at the site for both reference heights
+        in a given year.
+
+        Parameters:
+        ----------
+        year : int, optional
+            Year to plot. Must be within the dataset range. Default is 1997.
+
+        Returns:
+        -------
+        wind_speeds : pandas.DataFrame
+            Hourly wind speeds for the selected year at each reference height.
+        """
+        wind_speeds = self.get_velocity_site()
+
+        if year is not None:
+            #  Find the first year
+            year_init = pd.to_datetime(self.data.time.values[0]).year
+            #  Find the last year
+            year_fin = pd.to_datetime(self.data.time.values[-1]).year
+            #  Mask the hours in all years to the wind speeds
+            hours_in_years = pd.date_range(f'{year_init}-01-01 00:00Z',
+                                           f'{year_fin}-12-31 23:00Z',
+                                           freq='h')
+            wind_speeds = pd.DataFrame(wind_speeds.T,
+                                       index=hours_in_years,
+                                       columns=[f"{h} m" for h in self.h_ref])
+
+            if not year_init <= year <= year_fin:  # stop if invalid year
+                raise ValueError(
+                    f"Year '{year}' is not included in the loaded datasets "
+                    + f"({year_init}--{year_fin}). Please try another year.")
+
+            # Reduce the dataframe to only include the selected year
+            wind_speeds = wind_speeds[wind_speeds.index.year == year]
+
+        _, ax = plt.subplots(figsize=(8, 4))
+        for i, col in enumerate(wind_speeds.columns):
+            wind_speeds[col].plot(ax=ax,
+                                  alpha=1-0.3*i,
+                                  label=col)
+        plt.legend()
+        plt.title(f'Wind speed time series in {year} (Latitude: {self.lat}'
+                  + f', longitude: {self.lon})')
+        plt.show()
+
+        return wind_speeds
 
 
 class InterpolatedSite(WindCalculation):
@@ -248,7 +299,7 @@ class InterpolatedSite(WindCalculation):
         self.h_point = height_point
         self.h_ref = ref_heights
         self.name = name
-        self.data_length = self.data.sizes['valid_time']
+        self.data_length = self.data.sizes['time']
         self.lats = self.data['latitude'].values
         self.lons = self.data['longitude'].values
 
@@ -372,9 +423,9 @@ class InterpolatedSite(WindCalculation):
 
         if year is not None:
             #  Find the first year
-            year_init = pd.to_datetime(self.data.valid_time.values[0]).year
+            year_init = pd.to_datetime(self.data.time.values[0]).year
             #  Find the last year
-            year_fin = pd.to_datetime(self.data.valid_time.values[-1]).year
+            year_fin = pd.to_datetime(self.data.time.values[-1]).year
             #  Mask the hours in all years to the wind speeds
             hours_in_years = pd.date_range(f'{year_init}-01-01 00:00Z',
                                            f'{year_fin}-12-31 23:00Z',
@@ -517,7 +568,7 @@ class InterpolatedSite(WindCalculation):
 
         return AEP, CF
 
-    def compare_AEPs(self, power_curve, show_comparison=True):
+    def compare_AEPs_years(self, power_curve, show_comparison=True):
         """
         Compares AEP and CF values across available years. By default the AEPs
         are compared in a bar chart. It is assumed that no years are missing
@@ -537,7 +588,7 @@ class InterpolatedSite(WindCalculation):
             returning a float.
         """
         p_rated = max(power_curve['Power [kW]'])
-        years_col = pd.to_datetime(self.data.valid_time.values).year
+        years_col = pd.to_datetime(self.data.time.values).year
         years = np.unique(years_col)
         AEPs = {}
         CFs = {}

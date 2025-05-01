@@ -34,8 +34,8 @@ data = functions.load_nc_folder_to_dataset(folder_path)
 
 # 2. Compute wind speed and wind direction time series at 10 m and 100 m
 # heights for the four provided locations.
-ref_lats = data.latitude.values  # 8., 7.75
-ref_longs = data.longitude.values  # 55.5, 55.75
+ref_lats = data.latitude.values  # 55.75, 55.5
+ref_longs = data.longitude.values  # 7.75, 8
 ref_heights = np.unique([int(k.replace('u', '').replace('v', ''))
                          for k in list(data.keys())])  # 10, 100 m
 
@@ -58,8 +58,8 @@ ds1.get_angle_rad()  # or ds1.get_angle_deg()
 # 3. Compute wind speed and wind direction time series at 10 m and 100 m
 # heights for a given location inside the box bounded by the four locations,
 # such as the Horns Rev 1 site, using interpolation.
-lat = 7.9
-lon = 55.6
+lat = 55.6
+lon = 7.9
 is1 = classes.InterpolatedSite(dataset=data, latitude_point=lat,
                                longitude_point=lon, height_point=z,
                                ref_heights=ref_heights, name="IS1")
@@ -100,9 +100,11 @@ print(f"CF = {CF*100:.2f}%")
 
 
 # The two additional functions include:
-# - load_nc_folder_to_dataset() : (function) this was used at the top
-# - compare_AEPs() : (method) this compares yearly AEPs given a power curve
-AEPs, CFs = is1.compare_AEPs(power_curve=power_curve_data)
+# - plot_velocity_site() : (method) easy visualization of time series at a site
+# - compare_AEPs_years() : (method) compares yearly AEPs given a power curve
+ds1_ws = ds1.plot_velocity_site(year=1998)
+
+AEPs, CFs = is1.compare_AEPs_years(power_curve=power_curve_data)
 
 # Stop the timer
 print(f"\nElapsed time: {time.time() - start_time:.2f} seconds")

@@ -34,7 +34,7 @@ def load_nc_folder_to_dataset(folder_path):
     # Combine folder path with file names to get the full path for each file:
     nc_files_paths = [folder_path / nc_file for nc_file in nc_files]
 
-    ds_all = xr.open_mfdataset(nc_files_paths)
+    ds_all = xr.open_mfdataset(nc_files_paths, decode_timedelta=False)
     return ds_all
 
 
