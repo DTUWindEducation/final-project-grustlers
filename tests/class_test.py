@@ -1,9 +1,16 @@
-
+# pylint: disable=C0103  # Disable warnings about snake case variable naming
+# pylint: disable=C0116 # tests dont need docstring
 from pathlib import Path
+from unittest.mock import patch
 import pytest
 import numpy as np
+import pandas as pd
+from scipy.interpolate import interpn
+from scipy.integrate import quad
+
 from WRA import classes
 from WRA import functions
+
 
 @pytest.mark.parametrize(
     "v_x, v_y, expected_velocity",
@@ -120,7 +127,7 @@ dataset = functions.load_nc_folder_to_dataset(folder_path)
         (dataset, 500, -0.17340087890625, 0.0379486083984375)
     ]
 )
-def test_load_components_vx(data, index, u10_expec, u100_expec):
+def test_load_components_vx(dataset, index, u10_expec, u100_expec):
     ds1 = classes.DataSite(dataset, latitude=55.5, longitude=8,
                            ref_heights=[10, 100], name="P1")
 
@@ -137,7 +144,7 @@ def test_load_components_vx(data, index, u10_expec, u100_expec):
         (dataset, 500, 6.5696258544921875, 8.38238525390625)
     ]
 )
-def test_load_components_vy(data, index, v10_expec, v100_expec):
+def test_load_components_vy(dataset, index, v10_expec, v100_expec):
     ds1 = classes.DataSite(dataset, latitude=55.5, longitude=8,
                            ref_heights=[10, 100], name="P1")
 
@@ -147,3 +154,208 @@ def test_load_components_vy(data, index, v10_expec, v100_expec):
     assert vy[1][index] == pytest.approx(v100_expec)
 
 
+@patch("matplotlib.pyplot.show")
+def test_plot_velocity(mock_show):
+    # wind speeds alreay tested, pure plot test
+    ds1 = classes.DataSite(dataset, latitude=55.5, longitude=8,
+                           ref_heights=[10, 100], name="P1")
+
+    ds1.plot_velocity_site()
+    mock_show.assert_called_once()
+
+
+def test_plot_vel_except():
+    ds1 = classes.DataSite(dataset, latitude=55.5, longitude=8,
+                           ref_heights=[10, 100], name="P1")
+    with pytest.raises(ValueError, match=r"Year '1776' is not included"):
+        ds1.plot_velocity_site(year=1776)
+
+
+def test_interp_load_compnents_vx():
+    is1 = classes.InterpolatedSite(dataset, latitude_point=55.5,
+                                   longitude_point=8, height_point=50,
+                                   ref_heights=[10, 100], name="IS1")
+
+    vx, _ = is1.load_components_at_sites()
+
+    u10_expec = dataset['u10'].values[0][0, 1]
+    u100_expec = dataset['u100'].values[0][0, 1]
+
+    assert vx['u10'][0][0, 1] == pytest.approx(u10_expec)
+    assert vx['u100'][0][0, 1] == pytest.approx(u100_expec)
+
+
+def test_interp_load_compnents_vy():
+    is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
+                                   longitude_point=7.9, height_point=50,
+                                   ref_heights=[10, 100], name="IS1")
+
+    _, vy = is1.load_components_at_sites()
+
+    v10_expec = dataset['v10'].values[0][0, 1]
+    v100_expec = dataset['v100'].values[0][0, 1]
+
+    assert vy['v10'][0][0, 1] == pytest.approx(v10_expec)
+    assert vy['v100'][0][0, 1] == pytest.approx(v100_expec)
+
+
+def test_interp_components():
+    is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
+                                   longitude_point=7.9, height_point=50,
+                                   ref_heights=[10, 100], name="IS1")
+    
+    time_steps = np.arange(is1.data_length)
+    grid = (time_steps, is1.lats, is1.lons)
+    points = np.column_stack((
+        time_steps,
+        np.full_like(time_steps,
+                     is1.lat_point,
+                     dtype=float),
+        np.full_like(time_steps,
+                     is1.lon_point,
+                     dtype=float)
+    ))
+
+    u10_expec = interpn(grid, is1.v_x_sites['u10'],
+                        points, bounds_error=True)
+    u100_expec = interpn(grid, is1.v_x_sites['u100'],
+                         points, bounds_error=True)
+    v10_expec = interpn(grid, is1.v_y_sites['v10'],
+                        points, bounds_error=True)
+    v100_expec = interpn(grid, is1.v_y_sites['v100'],
+                         points, bounds_error=True)
+
+    dict_test = is1.interpolate_wind_components()
+
+    assert dict_test['u10'] == pytest.approx(u10_expec)
+    assert dict_test['u100'] == pytest.approx(u100_expec)
+    assert dict_test['v10'] == pytest.approx(v10_expec)
+    assert dict_test['v100'] == pytest.approx(v100_expec)
+
+
+def test_interp_angle():
+    is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
+                                   longitude_point=7.9, height_point=50,
+                                   ref_heights=[10, 100], name="IS1")
+
+    thetas_h_ref = np.unwrap(is1.get_angle_rad(), axis=0)
+    theta_rad = (
+        thetas_h_ref[0]
+        + (is1.h_point - is1.h_ref[0])
+        / (is1.h_ref[1] - is1.h_ref[0])
+        * (thetas_h_ref[1] - thetas_h_ref[0])
+    ) % (2 * np.pi)
+
+    theta_deg = theta_rad * 180 / np.pi
+
+    rad, deg = is1.interpolate_angle()
+
+    assert rad == pytest.approx(theta_rad)
+    assert deg == pytest.approx(theta_deg)
+
+
+@patch("matplotlib.pyplot.show")
+def test_weibull_dist(mock_show):
+    # k, A already tested by pdf_weib func test, so this is a plot test
+    is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
+                                   longitude_point=7.9, height_point=50,
+                                   ref_heights=[10, 100], name="IS1")
+
+    k, A = is1.weibull_distribution(year=1999)
+    mock_show.assert_called_once()
+
+
+def test_weibull_except():
+    is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
+                                   longitude_point=7.9, height_point=50,
+                                   ref_heights=[10, 100], name="IS1")
+    with pytest.raises(ValueError, match=r"Year '1776' is not included"):
+        k, A = is1.weibull_distribution(year=1776)
+
+
+@patch("matplotlib.pyplot.show")
+def test_wind_rose(mock_show):
+    # speed, dir already tested earlier, so plot test
+    is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
+                                   longitude_point=7.9, height_point=50,
+                                   ref_heights=[10, 100], name="IS1")
+    
+    speed, dir = is1.show_wind_rose()
+    mock_show.assert_called_once()
+
+
+power_curve_path = path_package / 'inputs/NREL_Reference_5MW_126.csv'
+power_curve_data = pd.read_csv(power_curve_path)
+
+
+@patch("matplotlib.pyplot.show")
+def test_get_AEP(mock_show, power_curve=power_curve_data):
+    latitude_point = 55.7
+    longitude_point = 7.9
+    height_point = 90
+    year = 2000
+    eta = 1.0  # turbine availability
+    u_in = power_curve['Wind Speed [m/s]'][0]  # cut-in wind speed
+    u_out = power_curve['Wind Speed [m/s]'][power_curve.index[-1]]
+
+    is_test = classes.InterpolatedSite(dataset, latitude_point,
+                                       longitude_point, height_point,
+                                       ref_heights=[10, 100], name=None)
+    k, A = is_test.weibull_distribution(year=year, show_plot=False)
+
+    def p_u(u):
+        '''
+        Function for interpolating the power curve at wind speed u
+        '''
+        power_curve_interp = np.interp(u,
+                                       power_curve['Wind Speed [m/s]'],
+                                       power_curve['Power [kW]'])
+        return power_curve_interp
+
+    def integrand(u):
+        '''
+        Combining power curve and weibull functions to a single integrand
+        '''
+        return p_u(u) * functions.pdf_weib(k, A, u)
+
+    hourly_avg, _ = quad(integrand, u_in, u_out,
+                         limit=100, epsabs=5e-06, epsrel=5e-06)
+    # "_" is simply the estimated absolute integration error
+
+    p_rated = max(power_curve['Power [kW]'])
+
+    expected_AEP = eta * 8760 * hourly_avg / 10**3  # MWh
+    expected_CF = hourly_avg / p_rated
+
+    assert is_test.get_AEP(power_curve, year, show_power_curve=True) == (
+                           pytest.approx(expected_AEP),
+                           pytest.approx(expected_CF))
+    mock_show.assert_called_once()
+
+
+@patch("matplotlib.pyplot.show")
+def test_compare_AEPs_years(mock_show, power_curve=power_curve_data):
+    latitude_point = 55.7
+    longitude_point = 7.9
+    height_point = 90
+    year = 2000
+
+    years_col = pd.to_datetime(dataset.time.values).year
+    years = np.unique(years_col)
+    expected_AEPs = {}
+    expected_CFs = {}
+
+    is_test = classes.InterpolatedSite(dataset, latitude_point,
+                                       longitude_point, height_point,
+                                       ref_heights=[10, 100], name=None)
+
+    for year in years:
+        (expected_AEPs[f"{year}"],
+            expected_CFs[f"{year}"]) = is_test.get_AEP(
+                power_curve, year=year)
+
+    AEPs, CFs = is_test.compare_AEPs_years(power_curve_data)
+    
+    assert AEPs == expected_AEPs
+    assert CFs == expected_CFs
+    mock_show.assert_called_once()
