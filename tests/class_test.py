@@ -127,8 +127,8 @@ dataset = functions.load_nc_folder_to_dataset(folder_path)
         (dataset, 500, -0.17340087890625, 0.0379486083984375)
     ]
 )
-def test_load_components_vx(dataset, index, u10_expec, u100_expec):
-    ds1 = classes.DataSite(dataset, latitude=55.5, longitude=8,
+def test_load_components_vx(data, index, u10_expec, u100_expec):
+    ds1 = classes.DataSite(data, latitude=55.5, longitude=8,
                            ref_heights=[10, 100], name="P1")
 
     vx, _ = ds1.load_components()
@@ -144,8 +144,8 @@ def test_load_components_vx(dataset, index, u10_expec, u100_expec):
         (dataset, 500, 6.5696258544921875, 8.38238525390625)
     ]
 )
-def test_load_components_vy(dataset, index, v10_expec, v100_expec):
-    ds1 = classes.DataSite(dataset, latitude=55.5, longitude=8,
+def test_load_components_vy(data, index, v10_expec, v100_expec):
+    ds1 = classes.DataSite(data, latitude=55.5, longitude=8,
                            ref_heights=[10, 100], name="P1")
 
     _, vy = ds1.load_components()
