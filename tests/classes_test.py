@@ -80,7 +80,7 @@ def test_get_alpha():
 
     wind = classes.WindCalculation(v_x, v_y, 50, [10, 100])
 
-    v, v_ref = wind.get_velocity_site() 
+    v, v_ref = wind.get_velocity_site()
 
     expected_alpha = np.log(v / v_ref) / np.log(10 / 100)
 
@@ -93,7 +93,7 @@ def test_calculate_wind_at_height():
     # h_point = 20, h_ref[0] = 10
     # alpha = 0.2
     # Expected: u_z = 5.0 * (20 / 10)^0.2
-    
+
     v_x = np.array([[3], [6]])
     v_y = np.array([[4], [8]])
 
@@ -113,7 +113,7 @@ def test_calculate_wind_at_height():
 
 path_main = Path(__file__)
 path_dir = path_main.parent
-path_package = path_dir.parent 
+path_package = path_dir.parent
 
 folder_name = 'inputs'
 folder_path = path_package / folder_name
@@ -203,7 +203,7 @@ def test_interp_components():
     is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
                                    longitude_point=7.9, height_point=50,
                                    ref_heights=[10, 100], name="IS1")
-    
+
     time_steps = np.arange(is1.data_length)
     grid = (time_steps, is1.lats, is1.lons)
     points = np.column_stack((
@@ -261,7 +261,7 @@ def test_weibull_dist(mock_show):
                                    longitude_point=7.9, height_point=50,
                                    ref_heights=[10, 100], name="IS1")
 
-    k, A = is1.weibull_distribution(year=1999)
+    is1.weibull_distribution(year=1999)
     mock_show.assert_called_once()
 
 
@@ -270,7 +270,7 @@ def test_weibull_except():
                                    longitude_point=7.9, height_point=50,
                                    ref_heights=[10, 100], name="IS1")
     with pytest.raises(ValueError, match=r"Year '1776' is not included"):
-        k, A = is1.weibull_distribution(year=1776)
+        is1.weibull_distribution(year=1776)
 
 
 @patch("matplotlib.pyplot.show")
@@ -279,8 +279,8 @@ def test_wind_rose(mock_show):
     is1 = classes.InterpolatedSite(dataset, latitude_point=55.6,
                                    longitude_point=7.9, height_point=50,
                                    ref_heights=[10, 100], name="IS1")
-    
-    speed, dir = is1.show_wind_rose()
+
+    is1.show_wind_rose()
     mock_show.assert_called_once()
 
 
@@ -355,7 +355,7 @@ def test_compare_AEPs_years(mock_show, power_curve=power_curve_data):
                 power_curve, year=year)
 
     AEPs, CFs = is_test.compare_AEPs_years(power_curve_data)
-    
+
     assert AEPs == expected_AEPs
     assert CFs == expected_CFs
     mock_show.assert_called_once()

@@ -15,18 +15,23 @@ The package allows users for visualizations to easily interpret the data for the
 
 Firstly, make sure that the explorer is located with the `FINAL-PROJECT-GRUSTLERS` as the upper most layer so that the subsequent usage of paths and relative paths work as intended.
 
-Secondly, to ensure that the code works as intended please set up a new environment with the Python version used during the code development and including the required packages. An explanation how to set up such an environment using the Anaconda prompt is given below:
+Secondly, to ensure that the code works as intended please set up a new environment with the Python version used during the code development and including the required packages. An explanation how to set up such an environment is given below:
+
 1. Create a new environment using the correct Python version:<br />
 `conda create -n <name> python=3.13 -y`<br />
-Note that you might need to download this version, if you haven't downloaded the newer Python versions in a while.
+Note that you might need to download this version, if you haven't downloaded the newer Python versions in a while.<br />
+You may also need to use the Anaconda prompt to create the environment.
 
-2. Active said environment:<br />
-`conda activate <name>`
-
+2. Ensure that you are in the environment you just created, by e.g.:<br />
+Pressing `CTRL + SHIFT + P` to open the Command Palette in VS Code (`CMD + SHIFT + P` on macOS).<br />
+Then select `Python: Select Interpreter` and choose the correct environment.
+ 
 3. Install the package incl. dependencies:<br />
-`pip install .`
-
-To activate the environment in VS Code simply click the current environment in the bottom right corner and select your new environment from the drop-down list at the top of your screen.
+If you wish to run pytests, or edit the package, you can install it as editable:<br />
+`pip install -e .`<br />
+Otherwise, simply install the package:<br />
+`pip install .`<br />
+You may need to open a new terminal, to ensure that the new environment is actived correctly.
 
 If you followed the steps correctly, you should now be able to run `main.py` to experience the package.
 

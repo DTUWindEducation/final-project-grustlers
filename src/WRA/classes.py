@@ -1,4 +1,8 @@
-# pylint: disable=C0103  # Disable warnings about snake case variable naming
+# pylint: disable=C0103,R0913,R0914,R0917
+# In order: Disable warnings about snake case variable naming
+#           Disables limit on arguments
+#           Disables limit on local variables
+#           Disable limit on positional argument
 '''
 This module contains classes useful for accelerating wind resource
 assessments (WRA). There are three classes of which the latter two
@@ -47,10 +51,6 @@ from scipy.integrate import quad  # for AEP
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 from windrose import WindroseAxes
-
-
-# import functions -> wrong because of:
-# "sys.path.insert(0, __file__.replace('main.py', '../src'))" in main.py...
 from WRA import functions
 
 
@@ -329,7 +329,7 @@ class InterpolatedSite(WindCalculation):
             Each dictionary value is then a 3D numpy.ndarray of shape:
             (t_samples, 2, 2). Where the latter two refer to the coordinates.
 
-            
+
             They can be accessed like this:
             load_components_at_sites()[0]['u10'][:, 0, 1]
                 - In this case the first index [0] chooses to consider eastward
@@ -490,7 +490,7 @@ class InterpolatedSite(WindCalculation):
                normed=True,
                opening=0.9,
                edgecolor='white',
-               cmap=plt.cm.winter)
+               cmap=plt.get_cmap('winter'))
         # Make the plot cleaner, more informational, and prettier:
         ax.set_legend(title='Wind speed [m/s]', loc='best', fontsize=16)
         yticks = mtick.FormatStrFormatter('%.1f%%')
@@ -601,18 +601,18 @@ class InterpolatedSite(WindCalculation):
             linestyles = ['dotted', 'dashdot', 'dashed']
             metric_labels = ['min', 'mean', 'max']
 
-            fig, ax = plt.subplots(figsize=(10, 5))
+            _, ax = plt.subplots(figsize=(10, 5))
             bars = ax.bar(x=years, height=list(AEPs.values()),
-                          color=plt.cm.tab10.colors[1])
+                          color=plt.get_cmap('tab10').colors[1])
 
             # Make the plot cleaner, more informational, and prettier:
             ax.set_ylabel("AEP [MWh]", fontsize=13)
             # Set alpha for every other bar to easily distinguish between years
-            for i, bar in enumerate(bars):
+            for i, bar_obj in enumerate(bars):
                 if i % 2 == 0:
-                    bar.set_alpha(0.75)
+                    bar_obj.set_alpha(0.75)
                 else:
-                    bar.set_alpha(1)
+                    bar_obj.set_alpha(1)
             # To see every year on the x-axis:
             ax.set_xticks(np.arange(years[0], years[-1]+1))
             ax.set_xticklabels(years, rotation=45, fontsize=13)
