@@ -6,14 +6,10 @@ WRA is short for Wind Resource Assessment.
 It is explicitly shown how the package can be used to provide the answers
 required by the "Functional requirements" of this WRA project.
 '''
-import sys
 from pathlib import Path
 import time
 import numpy as np
 import pandas as pd
-
-# Change the working directory to the package path
-sys.path.insert(0, __file__.replace('main.py', '../src'))
 
 # Import the package modules
 from WRA import classes

@@ -639,7 +639,6 @@ class InterpolatedSite(WindCalculation):
                         color='k',
                         alpha=0.85)
 
-            #plt.subplots_adjust(right=1.2)  # Purely visual: elongates the plot
             ax.set_title(f"{p_rated/10**3:.0f} MW reference turbine"
                          + f" (Latitude: {self.lat_point},"
                          + f" longitude: {self.lon_point},"

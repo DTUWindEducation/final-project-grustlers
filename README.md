@@ -23,8 +23,8 @@ Note that you might need to download this version, if you haven't downloaded the
 2. Active said environment:<br />
 `conda activate <name>`
 
-3. Install the required packages:<br />
-`pip install numpy scipy pandas matplotlib windrose xarray h5netcdf netCDF4 pytest pytest-cov WRA`
+3. Install the package incl. dependencies:<br />
+`pip install .`
 
 To activate the environment in VS Code simply click the current environment in the bottom right corner and select your new environment from the drop-down list at the top of your screen.
 
