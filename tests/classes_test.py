@@ -29,10 +29,10 @@ def test_velocity_calculation(v_x, v_y, expected_velocity):
 @pytest.mark.parametrize(
     "v_x, v_y, expected_rad",
     [
-        (0, 1, np.pi),                # wind from South
-        (1, 0, 1.5*np.pi),          # wind from West
-        (0, -1, 0.0),            # wind from North
-        (-1, 0, 0.5*np.pi),        # wind from East
+        (0, 1, np.pi),          # wind from South
+        (1, 0, 1.5*np.pi),      # wind from West
+        (0, -1, 0.0),           # wind from North
+        (-1, 0, 0.5*np.pi),     # wind from East
         (1, 1, (1.5*np.pi - np.arctan2(1, 1)) % (2*np.pi)),  # NW
         (-1, -1, (1.5*np.pi - np.arctan2(-1, -1)) % (2*np.pi)),  # SE
     ]
