@@ -108,3 +108,5 @@ AEPs, CFs = is1.compare_AEPs_years(power_curve=power_curve_data)
 
 # Stop the timer
 print(f"\nElapsed time: {time.time() - start_time:.2f} seconds")
+print('Note if not running in an interactive window this time will include'
+      ' the time it takes to close the figures.')

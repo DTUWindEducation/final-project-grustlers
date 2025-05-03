@@ -1,5 +1,5 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/zjSXGKeR)
-# Our Great Package
+# Wind Resource Assessment Package
 
 Team: Grustlers
 
@@ -47,11 +47,11 @@ In addition to the 3 classes the package also provides 2 functions provided in `
 
 A graphical overview of the classes and functions can be seen below:
 
-<img src="Overview.svg" alt="">
+<img src="diagrams/Overview.svg" alt="">
 
 In addition to a general overview of the architecture of the package a flowchart of an intended use case has also been provided to show how the different methods within the classes work together. In the flow chart the most typical use case (an object from the 'InterpolatedSite' class) is being shown:
 
-<img src="Flowchart.svg" alt="">
+<img src="diagrams/Flowchart.svg" alt="">
 
 ## Peer review
 
@@ -63,4 +63,4 @@ To ensure a smooth development of the package 2 methods were employed.<br />
 Firstly, as we didn't have a perfect overview of how to make the package in the most efficient way possible, the start of the project consisted of a lot of collaborative coding to ensure that all the team members agreed on the structure.<br />
 When the very early parts of the work had then been completed in a 'dev' branch to avoid any commits to 'main', several sub-branches from the 'dev' branch were then made including: 'classing', 'cleaning', 'diagramming', and 'testing' (technically the last 3 were made as copies of 'classing' as seen in the diagram below). These all had their respective purposes for the project and were occasionally PR'ed to the 'dev' branch which was subsequently PR'd to 'main'. The distribution of tasks into different branches allowed for all the team members to work on different parts of the project without disturbing each other.
 
-<img src="GitWorkflow.svg" alt="">
+<img src="diagrams/GitWorkflow.svg" alt="">

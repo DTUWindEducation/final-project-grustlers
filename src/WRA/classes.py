@@ -601,7 +601,7 @@ class InterpolatedSite(WindCalculation):
             linestyles = ['dotted', 'dashdot', 'dashed']
             metric_labels = ['min', 'mean', 'max']
 
-            fig, ax = plt.subplots(figsize=(8, 5))
+            fig, ax = plt.subplots(figsize=(10, 5))
             bars = ax.bar(x=years, height=list(AEPs.values()),
                           color=plt.cm.tab10.colors[1])
 
@@ -639,7 +639,7 @@ class InterpolatedSite(WindCalculation):
                         color='k',
                         alpha=0.85)
 
-            plt.subplots_adjust(right=1.2)  # Purely visual: elongates the plot
+            #plt.subplots_adjust(right=1.2)  # Purely visual: elongates the plot
             ax.set_title(f"{p_rated/10**3:.0f} MW reference turbine"
                          + f" (Latitude: {self.lat_point},"
                          + f" longitude: {self.lon_point},"
@@ -647,6 +647,7 @@ class InterpolatedSite(WindCalculation):
                          pad=0)
             ax.legend(loc='best', fontsize=12,
                       bbox_to_anchor=(0.97, 0.75))
+            plt.tight_layout()
             plt.show()
 
         return AEPs, CFs
