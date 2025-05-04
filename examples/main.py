@@ -76,7 +76,7 @@ ds1.calculate_wind_at_height()
 # at a given location (inside the box) and a given height.
 k, A = is1.weibull_distribution()
 
-# 7. Plot wind rose diagram that showes the frequencies of different wind
+# 7. Plot wind rose diagram that shows the frequencies of different wind
 # direction at a given location (inside the box) and a given height.
 is1.show_wind_rose()
 

@@ -5,11 +5,11 @@ Team: Grustlers
 
 ## Overview
 
-This is a Python package intended for simple wind resource assessment using ERA5 reanalysis data. The package has specifically been designed to work with multiple NetCDF4 files (.nc files provided in the `inputs` folder) but should with small modifications work for other file types as well.
+This is a Python package intended for simple wind resource assessment (WRA) using ERA5 reanalysis data. The package has specifically been designed to work with multiple NetCDF4 files (.nc files provided in the `inputs` folder) but should with small modifications work for other file types as well.
 
-The data provided is hourly wind data at 4 different locations (specified by latitude and longitude) and 2 different heights (for the data provided at 10 and 100m) near the Horns Rev 1 offshore wind farm. This combined with power curves for selected turbines will then provide the user with key wind energy metrics such as wind speed distribution, wind roses, and AEP for the aforementioned turbines.
+The data provided is hourly wind data at 4 different locations (specified by latitude and longitude) and 2 different heights (10 and 100 m for the provided data) near the Horns Rev 1 offshore wind farm. This combined with power curves for selected turbines will then provide the user with key wind energy metrics such as wind speed distribution, wind roses, and AEP.
 
-The package allows users for visualizations to easily interpret the data for the initial stage of wind energy project planning.
+The package allows users to visualize and easily interpret data for the initial stage of wind energy project planning.
 
 ## Quick-start guide
 
@@ -31,7 +31,7 @@ If you wish to run pytests, or edit the package, you can install it as editable:
 `pip install -e .`<br />
 Otherwise, simply install the package:<br />
 `pip install .`<br />
-You may need to open a new terminal, to ensure that the new environment is actived correctly.
+You may need to open a new terminal, to ensure that the new environment is activated correctly.
 
 If you followed the steps correctly, you should now be able to run `main.py` to experience the package.
 
@@ -40,14 +40,14 @@ If you followed the steps correctly, you should now be able to run `main.py` to 
 The package has been split into 2 parts, with the main one being the 3 classes and the secondary one being the (standalone) functions.
 
 The 3 classes provided consist of the superclass 'WindCalculation' and the 2 subclasses 'DataSite' and 'InterpolatedSite'. All 3 classes are provided in `classes.py` in the `src` folder.
-* The 'WindCalculation' class is intended for basic wind calculations such as velocity based on vector components, direction, and interpolation using the power-law. This class is essential for the subclasses, however, using it as a standalone class would require some pre-handling of the data provided in the `inputs` folder.
+* The 'WindCalculation' class is intended for basic wind calculations such as velocity-based on vector components, direction, and interpolation using the power-law. This class is essential for the subclasses, however, using it as a standalone class would require some pre-handling of the data provided in the `inputs` folder. Therefore, it is not used directly in main.
 * The 'DataSite' class is intended purely for investigating the data provided at the sites and is much more simple than the two other classes as it only contains two methods, one for the pre-handling of the data for the 'WindCalculation' class and one plotting the velocities at the given heights.
-* The third and final class 'InterpolatedSite' contains most of the remaining methods intended in the package, those being interpolation of both position (regarding altitude and longitude) as well as height. Given the inputs for a desired point, the class then provides all of the data and visualizations mentioned in the overview of the package.
+* The third and final class 'InterpolatedSite' contains most of the remaining methods intended in the package, those being interpolation of both position (regarding latitude and longitude) as well as height. Given the inputs for a desired point, the class then provides all of the data and visualizations mentioned in the overview of the package.
 
 For a more in-depth description of each of the methods provided by the 3 classes please refer to the docstrings provided in the `classes.py` file in the `src` folder.
 
 In addition to the 3 classes the package also provides 2 functions provided in `functions.py` in the `src` folder.
-* The first function 'load_nc_folder_to_dataset' is a quality of life function intended for providing the user with a easy way of inputting different data files, however, is also made specifically with the NetCDF4 files (.nc files) provided in the `inputs` folder in mind.
+* The first function 'load_nc_folder_to_dataset' is a quality of life function that allows the user to load multiple NetCDF4 (.nc) files in a single line (given that the files are in the same folder).
 * The second function 'pdf_weib' is simply the probability density function (PDF) which is used when working with the wind speed distribution in the 'InterpolatedSite' class.
 
 A graphical overview of the classes and functions can be seen below:
@@ -60,12 +60,12 @@ In addition to a general overview of the architecture of the package a flowchart
 
 ## Peer review
 
-Based on feedback from the previous project we have tried to adjust the quick-start guide, as it wasn't entirely clear last time. Additionally the doc-strings for the methods and functions should be more clear this time compared to last as well.
+Based on feedback from the previous project we have tried to adjust the quick-start guide, as it wasn't entirely clear last time. Additionally the docstrings for the methods and functions should be more clear this time compared to last as well.
 
 ## Git workflow
 
-To ensure a smooth development of the package 2 methods were employed.<br />
+To ensure a smooth development of the package, two approaches were taken:<br />
 Firstly, as we didn't have a perfect overview of how to make the package in the most efficient way possible, the start of the project consisted of a lot of collaborative coding to ensure that all the team members agreed on the structure.<br />
-When the very early parts of the work had then been completed in a 'dev' branch to avoid any commits to 'main', several sub-branches from the 'dev' branch were then made including: 'classing', 'cleaning', 'diagramming', and 'testing' (technically the last 3 were made as copies of 'classing' as seen in the diagram below). These all had their respective purposes for the project and were occasionally PR'ed to the 'dev' branch which was subsequently PR'd to 'main'. The distribution of tasks into different branches allowed for all the team members to work on different parts of the project without disturbing each other.
+When the very early parts of the work had been completed in a 'dev' branch (to avoid any commits to 'main'), several sub-branches from the 'dev' branch were then made: 'classing', 'cleaning', 'diagramming', and 'testing' (technically the last 3 were made as copies of 'classing' as seen in the diagram below). These all had their respective purposes for the project and were occasionally PR'ed to the 'dev' branch which was subsequently PR'd to 'main'. The distribution of tasks into different branches allowed for all the team members to work on different parts of the project without disturbing each other.
 
 <img src="diagrams/GitWorkflow.svg" alt="">
