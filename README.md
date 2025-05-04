@@ -60,7 +60,7 @@ In addition to a general overview of the architecture of the package a flowchart
 
 ## Peer review
 
-Based on feedback from the previous project we have tried to adjust the quick-start guide, as it wasn't entirely clear last time. Additionally the doc-strings for the methods and functions should be more clear this time compared to last as well.
+Based on feedback from the previous project we have tried to adjust the quick-start guide, as it wasn't entirely clear last time. Additionally the docstrings for the methods and functions should be more clear this time compared to last as well.
 
 ## Git workflow
 

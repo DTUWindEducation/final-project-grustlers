@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="KyMx_F-SmI5y71zodP5E" name="Overview">
-        <mxGraphModel dx="1099" dy="514" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="769" dy="360" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -10,7 +10,7 @@
                 <mxCell id="2" value="class WindCalculation()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="280" y="40" width="230" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="- v_x : int or numpy.ndarray&lt;div&gt;- v_y : int or numpy.ndarray&lt;/div&gt;&lt;div&gt;- height_point : int&lt;/div&gt;&lt;div&gt;- ref_heights : list[int]&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                <mxCell id="3" value="- v_x : int or numpy.ndarray&lt;div&gt;- v_y : int or numpy.ndarray&lt;/div&gt;&lt;div&gt;- height_point : float&lt;/div&gt;&lt;div&gt;- ref_heights : list[float]&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
                     <mxGeometry x="280" y="70" width="230" height="70" as="geometry"/>
                 </mxCell>
                 <mxCell id="4" value="+ get_velocity_site()&lt;div&gt;+ get_angle_rad()&lt;/div&gt;&lt;div&gt;+ get_angle_deg()&lt;/div&gt;&lt;div&gt;+ get_alpha()&lt;/div&gt;&lt;div&gt;+ calculate_wind_at_height()&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
@@ -28,7 +28,7 @@
                 <mxCell id="6" value="class InterpolatedSite(WindCalculation)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
                     <mxGeometry x="420" y="280" width="230" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" value="&lt;div&gt;- dataset :&amp;nbsp;xarray.Dataset&lt;/div&gt;&lt;div&gt;- latitude : int&lt;/div&gt;&lt;div&gt;- longitude : int&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;- height_point : int&lt;/span&gt;&lt;div&gt;- ref_heights : list[int]&lt;/div&gt;&lt;div&gt;- name : str or None&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                <mxCell id="7" value="&lt;div&gt;- dataset :&amp;nbsp;xarray.Dataset&lt;/div&gt;&lt;div&gt;- latitude : float&lt;/div&gt;&lt;div&gt;- longitude :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;- height_point :&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;&lt;div&gt;- ref_heights : list[&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;]&lt;/div&gt;&lt;div&gt;- name : str or None&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
                     <mxGeometry x="140" y="310" width="230" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="8" value="+ load_components()&lt;div&gt;+ plot_velocity_site()&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
@@ -40,7 +40,7 @@
                 <mxCell id="12" value="Subclasses" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
                     <mxGeometry x="40" y="280" width="90" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="&lt;div&gt;- dataset :&amp;nbsp;xarray.Dataset&lt;/div&gt;&lt;div&gt;- latitude_point : int&lt;/div&gt;&lt;div&gt;- longitude_point : int&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;- height_point : int&lt;/span&gt;&lt;div&gt;- ref_heights : list[int]&lt;/div&gt;&lt;div&gt;- name : str or None&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                <mxCell id="13" value="&lt;div&gt;- dataset :&amp;nbsp;xarray.Dataset&lt;/div&gt;&lt;div&gt;- latitude_point :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- longitude_point :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;- height_point :&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;&lt;div&gt;- ref_heights : list[&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;]&lt;/div&gt;&lt;div&gt;- name : str or None&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
                     <mxGeometry x="420" y="310" width="230" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="14" value="+ load_components_at_sites()&lt;div&gt;+ interpolate_wind_components()&lt;/div&gt;&lt;div&gt;+ interpolate_angle()&lt;/div&gt;&lt;div&gt;+ weibull_distribution()&lt;/div&gt;&lt;div&gt;+ show_wind_rose()&lt;/div&gt;&lt;div&gt;+ get_AEP&lt;/div&gt;&lt;div&gt;+ compare_AEPs&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
@@ -58,7 +58,7 @@
                 <mxCell id="18" value="def pdf_weib()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
                     <mxGeometry x="880" y="180" width="230" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="19" value="&lt;div&gt;Input:&lt;/div&gt;- k : int&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;- A : int&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;- u : numpy.ndarray&lt;br&gt;&lt;/font&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Output:&lt;/div&gt;&lt;div&gt;+&amp;nbsp;&lt;span style=&quot;color: rgb(0, 0, 0); background-color: transparent;&quot;&gt;numpy.ndarray&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
+                <mxCell id="19" value="&lt;div&gt;Input:&lt;/div&gt;- k :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;- A :&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;- u : numpy.ndarray&lt;br&gt;&lt;/font&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Output:&lt;/div&gt;&lt;div&gt;+&amp;nbsp;&lt;span style=&quot;color: rgb(0, 0, 0); background-color: transparent;&quot;&gt;numpy.ndarray&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
                     <mxGeometry x="880" y="210" width="230" height="110" as="geometry"/>
                 </mxCell>
             </root>
@@ -254,13 +254,13 @@
                 <mxCell id="lu054xU_zKwWIk47hF1_-42" value="wind_speeds : numpy.ndarray" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="1241.13" y="96.5" width="166.5" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="lu054xU_zKwWIk47hF1_-43" value="k : int&lt;div&gt;A : int&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="lu054xU_zKwWIk47hF1_-43" value="k :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;&lt;div&gt;A :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="1241.13" y="206.5" width="166.5" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="lu054xU_zKwWIk47hF1_-44" value="&lt;div&gt;power_curve : pandas.DataFrame&lt;/div&gt;year : int&lt;div&gt;show_curve : bool&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="987.63" y="206.5" width="130" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="lu054xU_zKwWIk47hF1_-45" value="&lt;div&gt;latitude_point : int&lt;/div&gt;&lt;div&gt;longitude_point : int&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;height_point : int&lt;/span&gt;&lt;div&gt;ref_heights : list[int]&lt;/div&gt;&lt;div&gt;name : str or None&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="lu054xU_zKwWIk47hF1_-45" value="&lt;div&gt;latitude_point :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;&lt;div&gt;longitude_point :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;height_point :&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;&lt;div&gt;ref_heights : list[&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;]&lt;/div&gt;&lt;div&gt;name : str or None&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="40" y="196.5" width="150" height="75" as="geometry"/>
                 </mxCell>
                 <mxCell id="lu054xU_zKwWIk47hF1_-46" value="year : int&lt;div&gt;show_comparison : bool&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
@@ -269,7 +269,7 @@
                 <mxCell id="lu054xU_zKwWIk47hF1_-47" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;Exceptions&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#36393d;" parent="1" vertex="1">
                     <mxGeometry x="531.13" y="36.5" width="70" height="36.5" as="geometry"/>
                 </mxCell>
-                <mxCell id="lu054xU_zKwWIk47hF1_-48" value="AEP : int&lt;div&gt;CF : int&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="lu054xU_zKwWIk47hF1_-48" value="AEP :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;&lt;div&gt;CF :&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="1241.13" y="316.5" width="166.5" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="lu054xU_zKwWIk47hF1_-49" value="" style="endArrow=classic;html=1;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="lu054xU_zKwWIk47hF1_-18" edge="1">
@@ -278,7 +278,7 @@
                         <mxPoint x="1387.63" y="386.5" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="lu054xU_zKwWIk47hF1_-50" value="AEPs : dict[str, int]&lt;div&gt;CFs : dict[str, int]&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="lu054xU_zKwWIk47hF1_-50" value="AEPs : dict[str,&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;float&lt;/span&gt;]&lt;div&gt;CFs : dict[str,&amp;nbsp;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: transparent;&quot;&gt;float&lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;]&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="1347.63" y="341.5" width="166.5" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="lu054xU_zKwWIk47hF1_-51" value="wind_speed : numpy.ndarray&lt;div&gt;wind_direction :&amp;nbsp;&lt;span style=&quot;color: rgb(0, 0, 0); background-color: transparent;&quot;&gt;numpy.ndarray&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
@@ -296,7 +296,7 @@
                 <mxCell id="lu054xU_zKwWIk47hF1_-54" value="ds_all : xarray.Dataset" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="711.13" y="86.5" width="150" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="lu054xU_zKwWIk47hF1_-55" value="thetas_h_ref : numpy.ndarray&lt;div&gt;h_refs : list&lt;/div&gt;&lt;div&gt;h_points : int&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="lu054xU_zKwWIk47hF1_-55" value="thetas_h_ref : numpy.ndarray&lt;div&gt;h_refs : list[float]&lt;/div&gt;&lt;div&gt;h_point : float&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="711.13" y="406.5" width="196.5" height="51.5" as="geometry"/>
                 </mxCell>
                 <mxCell id="lu054xU_zKwWIk47hF1_-56" value="theta_rad : numpy.ndarray&lt;div&gt;theta_deg : numpy.ndarray&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
