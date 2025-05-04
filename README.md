@@ -9,7 +9,7 @@ This is a Python package intended for simple wind resource assessment (WRA) usin
 
 The data provided is hourly wind data at 4 different locations (specified by latitude and longitude) and 2 different heights (10 and 100 m for the provided data) near the Horns Rev 1 offshore wind farm. This combined with power curves for selected turbines will then provide the user with key wind energy metrics such as wind speed distribution, wind roses, and AEP.
 
-The package allows users to visualize and easily interpret the data for the initial stage of wind energy project planning.
+The package allows users to visualize and easily interpret data for the initial stage of wind energy project planning.
 
 ## Quick-start guide
 
@@ -31,7 +31,7 @@ If you wish to run pytests, or edit the package, you can install it as editable:
 `pip install -e .`<br />
 Otherwise, simply install the package:<br />
 `pip install .`<br />
-You may need to open a new terminal, to ensure that the new environment is actived correctly.
+You may need to open a new terminal, to ensure that the new environment is activated correctly.
 
 If you followed the steps correctly, you should now be able to run `main.py` to experience the package.
 
